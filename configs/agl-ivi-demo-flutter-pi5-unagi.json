@@ -33,7 +33,8 @@
     "CREATE_BUNDLE_ENGINE_SYMLINK": "${SSH_PREFIX} -t ${COMPOSITOR_USER}@${DEVICE_HOSTNAME} ln -sf /usr/share/flutter/*/debug/lib/libflutter_engine.so /tmp/${appName}/lib/libflutter_engine.so",
     "CREATE_BUNDLE_FOLDER": "${CREATE_BUNDLE_FOLDERS} && ${CREATE_BUNDLE_ICUDTL_SYMLINK} && ${CREATE_BUNDLE_ENGINE_SYMLINK}",
     "COPY_PLATFORM_ID_CONFIG_TO_DEVICE": "${SCP_PREFIX} ${PLATFORM_ID_DIR}/config.toml ${COMPOSITOR_USER}@${DEVICE_HOSTNAME}:/tmp/${appName}/",
-    "COPY_ASSETS_TO_DEVICE": "${SCP_PREFIX} -r ${localPath}/* ${COMPOSITOR_USER}@${DEVICE_HOSTNAME}:/tmp/${appName}/data/flutter_assets/"
+    "COPY_ASSETS_TO_DEVICE": "${SCP_PREFIX} -r ${localPath}/* ${COMPOSITOR_USER}@${DEVICE_HOSTNAME}:/tmp/${appName}/data/flutter_assets/",
+    "XDG_RUNTIME_DIR": "/run/user/1001/"
   },
   "runtime": {
     "config": {
@@ -84,8 +85,8 @@
     "install": "bash -c \"${CREATE_BUNDLE_FOLDER} && ${COPY_PLATFORM_ID_CONFIG_TO_DEVICE} && ${COPY_ASSETS_TO_DEVICE}\"",
     "uninstall": "bash -c \"${DELETE_APP_FOLDER}\"",
     "runDebug": "bash -c \"${SSH_PREFIX} ${COMPOSITOR_USER}@${DEVICE_HOSTNAME} ${FLUTTER_AUTO_EXE}\"",
-    "forwardPort": null,
-    "forwardPortSuccessRegex": null,
-    "screenshot": null
+    "forwardPort": "bash -c \"${SSH_PREFIX} -o ExitOnForwardFailure=yes -L 127.0.0.1:${hostPort}:127.0.0.1:${devicePort} ${COMPOSITOR_USER}@${DEVICE_HOSTNAME} echo 'Port forwarding success'; read\"",
+    "forwardPortSuccessRegex": "Port forwarding success",
+    "screenshot": "bash -c \"${SSH_PREFIX} ${COMPOSITOR_USER}@${DEVICE_HOSTNAME} XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR} agl-screenshooter "
   }
 }
