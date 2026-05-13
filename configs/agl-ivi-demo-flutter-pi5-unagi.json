@@ -87,6 +87,6 @@
     "runDebug": "bash -c \"${SSH_PREFIX} ${COMPOSITOR_USER}@${DEVICE_HOSTNAME} ${FLUTTER_AUTO_EXE}\"",
     "forwardPort": "bash -c \"${SSH_PREFIX} -o ExitOnForwardFailure=yes -L 127.0.0.1:${hostPort}:127.0.0.1:${devicePort} ${COMPOSITOR_USER}@${DEVICE_HOSTNAME} echo 'Port forwarding success'; read\"",
     "forwardPortSuccessRegex": "Port forwarding success",
-    "screenshot": "bash -c \"${SSH_PREFIX} ${COMPOSITOR_USER}@${DEVICE_HOSTNAME} XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR} agl-screenshooter "
+    "screenshot": "bash -c \"${SSH_PREFIX} ${COMPOSITOR_USER}@${DEVICE_HOSTNAME} XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR} agl-screenshooter \""
   }
 }
