@@ -1,0 +1,91 @@
+{
+  "id": "agl-ivi-demo-flutter-pi5-unagi",
+  "flutter_version": "3.38.3",
+  "load": false,
+  "supported_archs": [
+    "aarch64",
+    "arm64",
+    "x86_64"
+  ],
+  "supported_host_types": [
+    "darwin",
+    "fedora",
+    "ubuntu"
+  ],
+  "type": "remote",
+  "env": {
+    "DEVICE_HOSTNAME": "raspberrypi5.local",
+    "COMPOSITOR_USER": "agl-driver",
+    "SERVICE_NAME": "flutter-ics-homescreen",
+    "SCP_PREFIX": "scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null",
+    "SSH_PREFIX": "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o BatchMode=yes",
+    "PING_CMD": "ping -c 1 -w 400 ${DEVICE_HOSTNAME}",
+    "STOP_SERVICE": "${SSH_PREFIX} -t root@${DEVICE_HOSTNAME} systemctl stop ${SERVICE_NAME}",
+    "FLUTTER_AUTO_EXE": "flutter-auto -b /tmp/${appName}",
+    "FLUTTER_DEBUG_PORT": "1234",
+    "FLUTTER_OBSERVATORY_HOST": "raspberrypi.local",
+    "RELEASE_NAME": "unagi",
+    "RELEASE_VERSION": "latest",
+    "DELETE_USER_PWD": "${SSH_PREFIX} -t root@${DEVICE_HOSTNAME} passwd -d ${COMPOSITOR_USER}",
+    "DELETE_APP_FOLDER": "${SSH_PREFIX} -t ${COMPOSITOR_USER}@${DEVICE_HOSTNAME} rm -rf /tmp/${appName}",
+    "CREATE_BUNDLE_FOLDERS": "${SSH_PREFIX} -t ${COMPOSITOR_USER}@${DEVICE_HOSTNAME} mkdir -p /tmp/${appName}/data/flutter_assets /tmp/${appName}/lib",
+    "CREATE_BUNDLE_ICUDTL_SYMLINK": "${SSH_PREFIX} -t ${COMPOSITOR_USER}@${DEVICE_HOSTNAME} ln -sf /usr/share/flutter/*/debug/data/icudtl.dat /tmp/${appName}/data/icudtl.dat",
+    "CREATE_BUNDLE_ENGINE_SYMLINK": "${SSH_PREFIX} -t ${COMPOSITOR_USER}@${DEVICE_HOSTNAME} ln -sf /usr/share/flutter/*/debug/lib/libflutter_engine.so /tmp/${appName}/lib/libflutter_engine.so",
+    "CREATE_BUNDLE_FOLDER": "${CREATE_BUNDLE_FOLDERS} && ${CREATE_BUNDLE_ICUDTL_SYMLINK} && ${CREATE_BUNDLE_ENGINE_SYMLINK}",
+    "COPY_PLATFORM_ID_CONFIG_TO_DEVICE": "${SCP_PREFIX} ${PLATFORM_ID_DIR}/config.toml ${COMPOSITOR_USER}@${DEVICE_HOSTNAME}:/tmp/${appName}/",
+    "COPY_ASSETS_TO_DEVICE": "${SCP_PREFIX} -r ${localPath}/* ${COMPOSITOR_USER}@${DEVICE_HOSTNAME}:/tmp/${appName}/data/flutter_assets/"
+  },
+  "runtime": {
+    "config": {
+      "global": {
+        "cursor_theme": "DMZ-White",
+        "app_id": "agl-pi5-unagi"
+      },
+      "view": {
+        "window_type": "BG",
+        "width": 1080,
+        "height": 1920,
+        "fullscreen": true
+      },
+      "window_activation_area": {
+        "x": 0,
+        "y": 0,
+        "width": 1080,
+        "height": 1920
+      }
+    },
+    "pre-requisites": {
+      "arm64": {
+        "darwin": {
+          "cmds": [
+            "bash -c \"arch -arm64 brew install xz qemu\""
+          ]
+        }
+      },
+      "x86_64": {
+        "darwin": {
+          "cmds": [
+            "bash -c \"arch -arm64 brew install xz qemu\""
+          ]
+        }
+      }
+    }
+  },
+  "overwrite-existing": true,
+  "custom-device": {
+    "id": "agl-pi5-${RELEASE_NAME}",
+    "label": "AGL ${RELEASE_NAME}-${RELEASE_VERSION} pi5",
+    "sdkNameAndVersion": "pi5-${RELEASE_NAME} ${RELEASE_VERSION}",
+    "platform": "linux-arm64",
+    "enabled": true,
+    "ping": "bash -c \"${PING_CMD}\"",
+    "pingSuccessRegex": "1 received",
+    "postBuild": "bash -c \"${STOP_SERVICE} && ${DELETE_USER_PWD}\"",
+    "install": "bash -c \"${CREATE_BUNDLE_FOLDER} && ${COPY_PLATFORM_ID_CONFIG_TO_DEVICE} && ${COPY_ASSETS_TO_DEVICE}\"",
+    "uninstall": "bash -c \"${DELETE_APP_FOLDER}\"",
+    "runDebug": "bash -c \"${SSH_PREFIX} ${COMPOSITOR_USER}@${DEVICE_HOSTNAME} ${FLUTTER_AUTO_EXE}\"",
+    "forwardPort": null,
+    "forwardPortSuccessRegex": null,
+    "screenshot": null
+  }
+}
