@@ -23,7 +23,7 @@
     "STOP_SERVICE": "${SSH_PREFIX} -t root@${DEVICE_HOSTNAME} systemctl stop ${SERVICE_NAME}",
     "FLUTTER_AUTO_EXE": "flutter-auto -b /tmp/${appName}",
     "FLUTTER_DEBUG_PORT": "1234",
-    "FLUTTER_OBSERVATORY_HOST": "raspberrypi.local",
+    "FLUTTER_OBSERVATORY_HOST": "raspberrypi5.local",
     "RELEASE_NAME": "unagi",
     "RELEASE_VERSION": "latest",
     "DELETE_USER_PWD": "${SSH_PREFIX} -t root@${DEVICE_HOSTNAME} passwd -d ${COMPOSITOR_USER}",
